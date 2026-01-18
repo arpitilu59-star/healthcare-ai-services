@@ -13,6 +13,9 @@ model_path = os.path.join(base_dir, 'medical_model.pkl')
 model = joblib.load(model_path)
 # Wahi symptoms jo train_model.py mein the
 symptoms_list = ['Fever', 'Cough', 'Headache', 'cold' 'Fatigue']
+@app.route('/', methods =['GET'])
+def home():
+    return "AI ML Backend is running live !"
 
 @app.route('/predict', methods=['POST'])
 def predict():
