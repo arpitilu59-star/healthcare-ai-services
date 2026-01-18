@@ -10,7 +10,7 @@ CORS(app)
 # ML Model load karein
 model = joblib.load('medical_model.pkl')
 # Wahi symptoms jo train_model.py mein the
-symptoms_list = ['Fever', 'Cough', 'Headache', 'Fatigue']
+symptoms_list = ['Fever', 'Cough', 'Headache', 'cold' 'Fatigue']
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -29,7 +29,8 @@ def predict():
 
     return jsonify({
         "prediction": f"AI Result: {prediction}",
-        "confidence": confidence
+        "confidence": confidence,
+        "analysis": "ML model analysis complete."
     })
 
 if __name__ == "__main__":
