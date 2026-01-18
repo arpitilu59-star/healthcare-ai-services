@@ -1,29 +1,37 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import joblib
+import numpy as np
+import os
 
 app = Flask(__name__)
 CORS(app)
 
+# ML Model load karein
+model = joblib.load('medical_model.pkl')
+# Wahi symptoms jo train_model.py mein the
+symptoms_list = ['Fever', 'Cough', 'Headache', 'Fatigue']
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    symptoms = data.get('symptoms', [])
+    user_symptoms = data.get('symptoms', [])
     
-    # Simple AI Logic (Baad mein isme ML Model .pkl file add karenge)
-    if "Fever" in symptoms and "Cough" in symptoms:
-        prediction = "Potential Viral Infection"
-        confidence = "85%"
-    elif "Headache" in symptoms:
-        prediction = "Tension Headache / Migraine"
-        confidence = "70%"
-    else:
-        prediction = "Symptoms Analyzed: Please consult a physician."
-        confidence = "60%"
+    # User input ko numerical vector mein badlein (0 aur 1)
+    input_vector = [1 if s in user_symptoms else 0 for s in symptoms_list]
+    
+    # AI Prediction
+    prediction = model.predict([input_vector])[0]
+    
+    # Confidence (Probability) calculate karein
+    proba = model.predict_proba([input_vector])
+    confidence = f"{np.max(proba) * 100:.1f}%"
 
     return jsonify({
-        "prediction": prediction,
+        "prediction": f"AI Result: {prediction}",
         "confidence": confidence
     })
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
