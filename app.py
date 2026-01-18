@@ -7,8 +7,10 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# ML Model load karein
-model = joblib.load('medical_model.pkl')
+# Model load karne ka sahi tareeka
+base_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(base_dir, 'medical_model.pkl')
+model = joblib.load(model_path)
 # Wahi symptoms jo train_model.py mein the
 symptoms_list = ['Fever', 'Cough', 'Headache', 'cold' 'Fatigue']
 
